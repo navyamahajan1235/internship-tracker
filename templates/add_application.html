@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Add Application</title>
+<title>Internship Tracker</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -17,6 +17,9 @@
 
 <input name="role" placeholder="Role" required>
 
+<label>Application Link</label>
+<input type="url" name="link" placeholder="https://company.com/apply">
+
 <select name="status">
 <option value="applied">Applied</option>
 <option value="interview">Interview</option>
@@ -30,7 +33,7 @@
 
 </form>
 
-<a href="/dashboard">Back to Dashboard</a>
+<a href="/dashboard" class="auth-link">Back to Dashboard</a>
 
 </div>
 

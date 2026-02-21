@@ -44,7 +44,9 @@ def init_db():
             company TEXT,
             role TEXT,
             status TEXT,
-            deadline TEXT
+            deadline TEXT,
+            link TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
@@ -119,6 +121,7 @@ def dashboard():
 
     search = request.args.get("search", "").strip().lower()
     status = request.args.get("status", "").strip().lower()
+    sort = request.args.get("sort", "")
 
     query = "SELECT * FROM applications WHERE user_id=?"
     params = [session["user_id"]]
@@ -131,8 +134,14 @@ def dashboard():
         query += " AND LOWER(status)=?"
         params.append(status)
     
-    query += " ORDER BY deadline ASC"
-
+    # Sorting logic
+    if sort == "deadline":
+        query += " ORDER BY deadline ASC"
+    elif sort == "company":
+        query += " ORDER BY company ASC"
+    elif sort == "status":
+        query += " ORDER BY status ASC"
+        
     applications = db.execute(query, params).fetchall()
 
     stats = db.execute("""
@@ -151,7 +160,8 @@ def dashboard():
         applications=applications,
         stats=stats,
         search=search,
-        status=status
+        status=status,
+        sort=sort
     )
 
 
@@ -169,13 +179,14 @@ def add():
         role = request.form["role"]
         status = request.form["status"].lower()
         deadline = request.form["deadline"]
+        link = request.form["link"]
 
         db = get_db()
 
         db.execute("""
-            INSERT INTO applications(user_id,company,role,status,deadline)
-            VALUES (?,?,?,?,?)
-        """, (session["user_id"], company, role, status, deadline))
+            INSERT INTO applications (company, role, status, deadline, link, user_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (company, role, status, deadline, link, session["user_id"]))
 
         db.commit()
 
@@ -197,12 +208,13 @@ def edit(id):
         role = request.form["role"]
         status = request.form["status"].lower()
         deadline = request.form["deadline"]
+        link = request.form["link"]
 
         db.execute("""
             UPDATE applications
-            SET company=?, role=?, status=?, deadline=?
+            SET company=?, role=?, status=?, deadline=?, link=?
             WHERE id=? AND user_id=?
-        """, (company, role, status, deadline, id, session["user_id"]))
+        """, (company, role, status, deadline, link, id, session["user_id"]))
 
         db.commit()
 

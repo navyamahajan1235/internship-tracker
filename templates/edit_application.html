@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Edit Application</title>
+<title>Internship Tracker</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -16,6 +16,9 @@
 <input name="company" value="{{ app.company }}" required>
 
 <input name="role" value="{{ app.role }}" required>
+
+<label>Application Link</label>
+<input type="url" name="link" value="{{ app.link }}" placeholder="https://company.com/apply">
 
 <select name="status">
 
@@ -32,7 +35,7 @@
 
 </form>
 
-<a href="/dashboard">Back to Dashboard</a>
+<a href="/dashboard" class="auth-link">Back to Dashboard</a>
 
 </div>
 

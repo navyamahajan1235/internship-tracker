@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Dashboard</title>
+<title>Internship Tracker</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -11,18 +11,39 @@
 
 <h2>Internship Dashboard</h2>
 
-<a href="/add">Add Application</a>
-<a href="/logout">Logout</a>
+<div class="dashboard-header">
+    <a href="/add" class="add-btn">Add Application</a>
+    <a href="/logout" class="logout-btn">Logout</a>
+</div>
 
 <br><br>
 
-<div>
+<div class="stats">
 
-Total: {{ stats.total or 0 }}
-Applied: {{ stats.applied or 0 }}
-Interview: {{ stats.interview or 0 }}
-Offer: {{ stats.offer or 0 }}
-Rejected: {{ stats.rejected or 0 }}
+<div class="card">
+<h3>{{ stats.total or 0 }}</h3>
+<p>Total</p>
+</div>
+
+<div class="card">
+<h3>{{ stats.applied or 0 }}</h3>
+<p>Applied</p>
+</div>
+
+<div class="card">
+<h3>{{ stats.interview or 0 }}</h3>
+<p>Interview</p>
+</div>
+
+<div class="card">
+<h3>{{ stats.offer or 0 }}</h3>
+<p>Offer</p>
+</div>
+
+<div class="card">
+<h3>{{ stats.rejected or 0 }}</h3>
+<p>Rejected</p>
+</div>
 
 </div>
 
@@ -40,6 +61,13 @@ Rejected: {{ stats.rejected or 0 }}
     <option value="rejected" {% if status=="rejected" %}selected{% endif %}>Rejected</option>
 </select>
 
+<select name="sort">
+    <option value="">Sort By</option>
+    <option value="deadline" {% if sort=="deadline" %}selected{% endif %}>Deadline</option>
+    <option value="company" {% if sort=="company" %}selected{% endif %}>Company</option>
+    <option value="status" {% if sort=="status" %}selected{% endif %}>Status</option>
+</select>
+
 <button type="submit">Search</button>
 
 </form>
@@ -53,38 +81,58 @@ Rejected: {{ stats.rejected or 0 }}
 <th>Role</th>
 <th>Status</th>
 <th>Deadline</th>
+<th>Created</th>
+<th>Link</th>
 <th>Actions</th>
 </tr>
 
-{% for app in applications %}
-
 {% if applications|length == 0 %}
 <tr>
-    <td colspan="5" style="text-align:center; padding:20px; color:#6b7280;">
-        No applications found
-    </td>
+<td colspan="5" style="text-align:center; padding:20px; color:#6b7280;">
+No applications found
+</td>
 </tr>
-{% endif %}
 
+{% else %}
+
+{% for app in applications %}
 <tr>
-
-<td>{{ app.company }}</td>
-<td>{{ app.role }}</td>
+<td>
+{% if app.link %}
+<a href="{{ app.link }}" target="_blank">
+{{ app.company.capitalize() }}
+</a>
+{% else %}
+{{ app.company.capitalize() }}
+{% endif %}
+</td>
+<td>{{ app.role.upper() }}</td>
 <td>
     <span class="status {{ app.status }}">
-        {{ app.status }}
+        {{ app.status.capitalize() }}
     </span>
 </td>
-<td>{{ app.deadline }}</td>
+<td>{{ app.deadline[8:10] }}-{{ app.deadline[5:7] }}-{{ app.deadline[0:4] }}</td>
+
+<td>{{ app.created_at[8:10] }}-{{ app.created_at[5:7] }}-{{ app.created_at[0:4] }}</td>
+
+<td>
+    {% if app.link %}
+        <a href="{{ app.link }}" target="_blank">View</a>
+    {% else %}
+        -
+    {% endif %}
+</td>
 
 <td>
 <a href="/edit/{{ app.id }}">Edit</a>
-<a href="/delete/{{ app.id }}">Delete</a>
+<a href="/delete/{{ app.id }}" onclick="return confirm('Are you sure you want to delete this application?')">Delete</a>
 </td>
-
 </tr>
 
 {% endfor %}
+
+{% endif %}
 
 </table>
 
