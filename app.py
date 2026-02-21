@@ -1,19 +1,65 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, g
 import sqlite3
+import os
 
 app = Flask(__name__)
-app.secret_key = "secretkey"
+app.secret_key = "supersecretkey"
 
+DATABASE = "database.db"
+
+
+# ---------------- DATABASE CONNECTION ----------------
 
 def get_db():
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row
-    return conn
+    if "db" not in g:
+        g.db = sqlite3.connect(DATABASE)
+        g.db.row_factory = sqlite3.Row
+    return g.db
 
+
+@app.teardown_appcontext
+def close_db(exception):
+    db = g.pop("db", None)
+    if db is not None:
+        db.close()
+
+
+# ---------------- DATABASE INIT ----------------
+
+def init_db():
+    db = get_db()
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            password TEXT
+        )
+    """)
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS applications(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            company TEXT,
+            role TEXT,
+            status TEXT,
+            deadline TEXT
+        )
+    """)
+
+    db.commit()
+
+
+@app.before_request
+def before_request():
+    init_db()
+
+
+# ---------------- AUTH ROUTES ----------------
 
 @app.route("/", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
 
         username = request.form["username"]
@@ -44,7 +90,7 @@ def register():
         db = get_db()
 
         db.execute(
-            "INSERT INTO users (username, password) VALUES (?,?)",
+            "INSERT INTO users(username,password) VALUES (?,?)",
             (username, password)
         )
 
@@ -55,6 +101,14 @@ def register():
     return render_template("register.html")
 
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
+# ---------------- DASHBOARD ----------------
+
 @app.route("/dashboard")
 def dashboard():
 
@@ -63,27 +117,48 @@ def dashboard():
 
     db = get_db()
 
-    apps = db.execute(
-        "SELECT * FROM applications WHERE user_id=?",
-        (session["user_id"],)
-    ).fetchall()
+    search = request.args.get("search", "").strip().lower()
+    status = request.args.get("status", "").strip().lower()
+
+    query = "SELECT * FROM applications WHERE user_id=?"
+    params = [session["user_id"]]
+
+    if search:
+        query += " AND LOWER(company) LIKE ?"
+        params.append(f"%{search}%")
+
+    if status and status != "":
+        query += " AND LOWER(status)=?"
+        params.append(status)
+    
+    query += " ORDER BY deadline ASC"
+
+    applications = db.execute(query, params).fetchall()
 
     stats = db.execute("""
         SELECT
             COUNT(*) as total,
-            SUM(CASE WHEN status='applied' THEN 1 ELSE 0 END) as applied,
-            SUM(CASE WHEN status='interview' THEN 1 ELSE 0 END) as interview,
-            SUM(CASE WHEN status='offer' THEN 1 ELSE 0 END) as offer,
-            SUM(CASE WHEN status='rejected' THEN 1 ELSE 0 END) as rejected
+            SUM(CASE WHEN LOWER(status)='applied' THEN 1 ELSE 0 END) as applied,
+            SUM(CASE WHEN LOWER(status)='interview' THEN 1 ELSE 0 END) as interview,
+            SUM(CASE WHEN LOWER(status)='offer' THEN 1 ELSE 0 END) as offer,
+            SUM(CASE WHEN LOWER(status)='rejected' THEN 1 ELSE 0 END) as rejected
         FROM applications
         WHERE user_id=?
     """, (session["user_id"],)).fetchone()
 
-    return render_template("dashboard.html", apps=apps, stats=stats)
+    return render_template(
+        "dashboard.html",
+        applications=applications,
+        stats=stats,
+        search=search,
+        status=status
+    )
 
+
+# ---------------- ADD APPLICATION ----------------
 
 @app.route("/add", methods=["GET", "POST"])
-def add_application():
+def add():
 
     if "user_id" not in session:
         return redirect("/")
@@ -97,12 +172,10 @@ def add_application():
 
         db = get_db()
 
-        db.execute(
-            """INSERT INTO applications
-               (user_id, company, role, status, deadline)
-               VALUES (?,?,?,?,?)""",
-            (session["user_id"], company, role, status, deadline)
-        )
+        db.execute("""
+            INSERT INTO applications(user_id,company,role,status,deadline)
+            VALUES (?,?,?,?,?)
+        """, (session["user_id"], company, role, status, deadline))
 
         db.commit()
 
@@ -111,11 +184,10 @@ def add_application():
     return render_template("add_application.html")
 
 
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit_application(id):
+# ---------------- EDIT APPLICATION ----------------
 
-    if "user_id" not in session:
-        return redirect("/")
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
 
     db = get_db()
 
@@ -144,11 +216,10 @@ def edit_application(id):
     return render_template("edit_application.html", app=app_data)
 
 
-@app.route("/delete/<int:id>")
-def delete_application(id):
+# ---------------- DELETE APPLICATION ----------------
 
-    if "user_id" not in session:
-        return redirect("/")
+@app.route("/delete/<int:id>")
+def delete(id):
 
     db = get_db()
 
@@ -162,13 +233,7 @@ def delete_application(id):
     return redirect("/dashboard")
 
 
-@app.route("/logout")
-def logout():
-
-    session.clear()
-
-    return redirect("/")
-
+# ---------------- RUN ----------------
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,104 +1,182 @@
-body{
-font-family:Arial;
-background:linear-gradient(to right,#667eea,#764ba2);
-margin:0;
-padding:0;
+/* Background */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0;
+    padding: 0;
 }
 
-.container{
-width:700px;
-margin:60px auto;
-background:white;
-padding:30px;
-border-radius:12px;
-box-shadow:0 15px 35px rgba(0,0,0,0.2);
+/* Main container */
+.container {
+    width: 700px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-h2{
-text-align:center;
-margin-bottom:20px;
+/* Headings */
+h1, h2 {
+    text-align: center;
+    color: #222;
 }
 
-input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:6px;
-border:1px solid #ccc;
+/* Inputs */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    color: #222;          /* FIX: make text visible */
+    background: #fff;     /* FIX */
 }
 
-button{
-width:100%;
-padding:12px;
-background:#667eea;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-font-size:16px;
+/* Buttons */
+button {
+    width: 100%;
+    padding: 10px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-button:hover{
-background:#5a67d8;
+button:hover {
+    background: #5a67d8;
 }
 
-a{
-color:#667eea;
-text-decoration:none;
-font-weight:bold;
+/* Links */
+a {
+    text-decoration: none;
+    font-weight: bold;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
+/* Add button */
+.add-btn {
+    background: #667eea;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
 }
 
-th{
-background:#667eea;
-color:white;
-padding:12px;
+.logout-btn {
+    background: #e53e3e;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-left: 10px;
 }
 
-td{
-padding:12px;
-border-bottom:1px solid #ddd;
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
 
-.delete-btn{
-color:red;
+th {
+    background: #667eea;
+    color: white;
+    padding: 10px;
 }
 
-.stats{
-display:flex;
-gap:10px;
-margin-bottom:20px;
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    color: #222;          /* FIX: THIS SOLVES YOUR ISSUE */
+    background: white;    /* FIX */
 }
 
-.stat-card{
-flex:1;
-padding:15px;
-border-radius:10px;
-text-align:center;
-font-weight:bold;
+/* Row hover */
+tr:hover {
+    background: #f7f7f7;
 }
 
-.stat-card:nth-child(1){
-background:#e3f2fd;
+/* Status colors */
+.status-applied {
+    background: #edf2f7;
+    color: #2d3748;
+    padding: 5px 10px;
+    border-radius: 12px;
 }
 
-.stat-card:nth-child(2){
-background:#fff3e0;
+.status-interview {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 5px 10px;
+    border-radius: 12px;
 }
 
-.stat-card:nth-child(3){
-background:#e8f5e9;
+.status-offer {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 5px 10px;
+    border-radius: 12px;
 }
 
-.stat-card:nth-child(4){
-background:#ffebee;
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 5px 10px;
+    border-radius: 12px;
 }
 
-.stat-card:nth-child(5){
-background:#f3e5f5;
+/* Stats badges */
+.stats {
+    margin: 15px 0;
+}
+
+.stats span {
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-right: 8px;
+    font-size: 13px;
+}
+
+.total { background: #e2e8f0; }
+.applied { background: #edf2f7; }
+.interview { background: #fef3c7; }
+.offer { background: #d1fae5; }
+.rejected { background: #fee2e2; }
+
+/* Edit delete links */
+.edit {
+    color: #3182ce;
+}
+
+.delete {
+    color: #e53e3e;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.status.applied {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.status.interview {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status.offer {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status.rejected {
+    background: #fee2e2;
+    color: #991b1b;
 }

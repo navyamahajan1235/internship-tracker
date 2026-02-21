@@ -17,15 +17,20 @@
 
 <input name="role" value="{{ app.role }}" required>
 
-<input name="status" value="{{ app.status }}" required>
+<select name="status">
+
+<option value="applied">Applied</option>
+<option value="interview">Interview</option>
+<option value="offer">Offer</option>
+<option value="rejected">Rejected</option>
+
+</select>
 
 <input type="date" name="deadline" value="{{ app.deadline }}" required>
 
-<button>Update Application</button>
+<button type="submit">Update Application</button>
 
 </form>
-
-<br>
 
 <a href="/dashboard">Back to Dashboard</a>
 

@@ -9,7 +9,7 @@
 
 <div class="container">
 
-<h2>Add Internship Application</h2>
+<h2>Add Internship</h2>
 
 <form method="POST">
 
@@ -17,15 +17,18 @@
 
 <input name="role" placeholder="Role" required>
 
-<input name="status" placeholder="Applied / Interview / Offer / Rejected" required>
+<select name="status">
+<option value="applied">Applied</option>
+<option value="interview">Interview</option>
+<option value="offer">Offer</option>
+<option value="rejected">Rejected</option>
+</select>
 
 <input type="date" name="deadline" required>
 
-<button>Add Application</button>
+<button type="submit">Add Application</button>
 
 </form>
-
-<br>
 
 <a href="/dashboard">Back to Dashboard</a>
 

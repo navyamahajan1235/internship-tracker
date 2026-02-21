@@ -9,38 +9,44 @@
 
 <div class="container">
 
-<h2>Your Internship Applications</h2>
+<h2>Internship Dashboard</h2>
 
-<div style="display:flex; justify-content:space-between;">
-<a href="/add">+ Add Application</a>
+<a href="/add">Add Application</a>
 <a href="/logout">Logout</a>
-</div>
 
-<div class="stats">
+<br><br>
 
-<div class="stat-card">
-Total<br>{{ stats.total or 0 }}
-</div>
+<div>
 
-<div class="stat-card">
-Applied<br>{{ stats.applied or 0 }}
-</div>
-
-<div class="stat-card">
-Interview<br>{{ stats.interview or 0 }}
-</div>
-
-<div class="stat-card">
-Offer<br>{{ stats.offer or 0 }}
-</div>
-
-<div class="stat-card">
-Rejected<br>{{ stats.rejected or 0 }}
-</div>
+Total: {{ stats.total or 0 }}
+Applied: {{ stats.applied or 0 }}
+Interview: {{ stats.interview or 0 }}
+Offer: {{ stats.offer or 0 }}
+Rejected: {{ stats.rejected or 0 }}
 
 </div>
 
-<table>
+<br>
+
+<form method="GET">
+
+<input name="search" placeholder="Search company">
+
+<select name="status">
+    <option value="">All Status</option>
+    <option value="applied" {% if status=="applied" %}selected{% endif %}>Applied</option>
+    <option value="interview" {% if status=="interview" %}selected{% endif %}>Interview</option>
+    <option value="offer" {% if status=="offer" %}selected{% endif %}>Offer</option>
+    <option value="rejected" {% if status=="rejected" %}selected{% endif %}>Rejected</option>
+</select>
+
+<button type="submit">Search</button>
+
+</form>
+
+<br>
+
+<table border="1">
 
 <tr>
 <th>Company</th>
@@ -50,22 +56,30 @@ Rejected<br>{{ stats.rejected or 0 }}
 <th>Actions</th>
 </tr>
 
-{% for app in apps %}
+{% for app in applications %}
+
+{% if applications|length == 0 %}
+<tr>
+    <td colspan="5" style="text-align:center; padding:20px; color:#6b7280;">
+        No applications found
+    </td>
+</tr>
+{% endif %}
 
 <tr>
 
 <td>{{ app.company }}</td>
-
 <td>{{ app.role }}</td>
-
-<td>{{ app.status }}</td>
-
+<td>
+    <span class="status {{ app.status }}">
+        {{ app.status }}
+    </span>
+</td>
 <td>{{ app.deadline }}</td>
 
 <td>
-<a href="/edit/{{ app.id }}">Edit</a> |
-<a href="/delete/{{ app.id }}" class="delete-btn"
-onclick="return confirm('Delete this application?')">Delete</a>
+<a href="/edit/{{ app.id }}">Edit</a>
+<a href="/delete/{{ app.id }}">Delete</a>
 </td>
 
 </tr>
