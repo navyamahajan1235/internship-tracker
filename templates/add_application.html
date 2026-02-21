@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Application</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Add Internship Application</h2>
+
+<form method="POST">
+
+<input name="company" placeholder="Company Name" required>
+
+<input name="role" placeholder="Role" required>
+
+<input name="status" placeholder="Applied / Interview / Offer / Rejected" required>
+
+<input type="date" name="deadline" required>
+
+<button>Add Application</button>
+
+</form>
+
+<br>
+
+<a href="/dashboard">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

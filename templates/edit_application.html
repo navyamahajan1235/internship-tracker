@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Application</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Edit Application</h2>
+
+<form method="POST">
+
+<input name="company" value="{{ app.company }}" required>
+
+<input name="role" value="{{ app.role }}" required>
+
+<input name="status" value="{{ app.status }}" required>
+
+<input type="date" name="deadline" value="{{ app.deadline }}" required>
+
+<button>Update Application</button>
+
+</form>
+
+<br>
+
+<a href="/dashboard">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

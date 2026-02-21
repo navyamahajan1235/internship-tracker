@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Your Internship Applications</h2>
+
+<div style="display:flex; justify-content:space-between;">
+<a href="/add">+ Add Application</a>
+<a href="/logout">Logout</a>
+</div>
+
+<div class="stats">
+
+<div class="stat-card">
+Total<br>{{ stats.total or 0 }}
+</div>
+
+<div class="stat-card">
+Applied<br>{{ stats.applied or 0 }}
+</div>
+
+<div class="stat-card">
+Interview<br>{{ stats.interview or 0 }}
+</div>
+
+<div class="stat-card">
+Offer<br>{{ stats.offer or 0 }}
+</div>
+
+<div class="stat-card">
+Rejected<br>{{ stats.rejected or 0 }}
+</div>
+
+</div>
+
+<table>
+
+<tr>
+<th>Company</th>
+<th>Role</th>
+<th>Status</th>
+<th>Deadline</th>
+<th>Actions</th>
+</tr>
+
+{% for app in apps %}
+
+<tr>
+
+<td>{{ app.company }}</td>
+
+<td>{{ app.role }}</td>
+
+<td>{{ app.status }}</td>
+
+<td>{{ app.deadline }}</td>
+
+<td>
+<a href="/edit/{{ app.id }}">Edit</a> |
+<a href="/delete/{{ app.id }}" class="delete-btn"
+onclick="return confirm('Delete this application?')">Delete</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+</html>
